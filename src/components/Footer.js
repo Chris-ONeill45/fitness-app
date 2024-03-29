@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/footer.css';
 
 const Footer = () => {
   const authors = ['Nicholas Barfoot', 'James Carrier', 'Chris ONeill'];
