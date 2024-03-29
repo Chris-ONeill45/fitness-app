@@ -1,7 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
-  return <div className="log-in-form"></div>;
+  return (
+    <div>
+      <Link to="/registration">Register Here</Link>
+    </div>
+  );
 };
 
 export default LoginForm;
