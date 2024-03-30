@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import '../styles/app.css';
 import LoginForm from './LogInForm';
 import RegistrationForm from './RegistrationForm';
+import InitSetForm from './InitSetForm';
 
 const App = () => {
   return (
@@ -11,6 +12,10 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LoginForm />} />
           <Route path="/registration" element={<RegistrationForm />} />
+          <Route
+            path="/init-set"
+            element={<InitSetForm name="John" email="john@example.com" />}
+          />
         </Routes>
       </Router>
     </div>
