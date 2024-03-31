@@ -11,7 +11,6 @@ const LoginForm = ({ userStatus, setUserStatus }) => {
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,7 +92,6 @@ const LoginForm = ({ userStatus, setUserStatus }) => {
           <button type="submit">Login</button>
         )}
         <p>{userStatus.message}</p>
-        {error && <div className="error-message">{error}</div>}
       </form>
       <Link to="/registration">Register Here</Link>
     </div>

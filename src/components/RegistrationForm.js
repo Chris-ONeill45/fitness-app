@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+import app from '../firebaseConfig';
+import '../styles/registration-form.css';
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ userStatus, setUserStatus }) => {
+  const auth = getAuth(app);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,76 +27,107 @@ const RegistrationForm = () => {
     const { name, email, password, confirmPassword } = formData;
 
     if (!name || !email || !password || !confirmPassword) {
-      setError('All fields are required');
+      setUserStatus({ ...userStatus, message: 'All fields are required' });
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setUserStatus({ ...userStatus, message: 'Passwords do not match' });
       return;
     }
 
-    try {
-      const response = await axios.post('/', formData); // What is the path... is this where we put Auth - Firebase???
-      console.log('Registration successful:', response.data);
-    } catch (err) {
-      console.error('Registration failed:', err);
-      setError('Registration failed. Please try again later.');
-    }
+    createUserWithEmailAndPassword(auth, formData.email, formData.password)
+      .then((response) => {
+        setUserStatus({
+          signedin: true,
+          signedinEmail: response.user.email,
+          message: `${response.user.email} registered`,
+        });
+      })
+      .catch((err) => {
+        setUserStatus({
+          signedin: false,
+          signedinEmail: null,
+          message: err.message,
+        });
+      });
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
+  };
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUserStatus({
+          signedin: false,
+          signedinEmail: null,
+          message: 'Not signed in',
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setUserStatus({
+          signedin: false,
+          signedinEmail: null,
+          message: err.message,
+        });
+      });
   };
 
   return (
     <div className="registration-form">
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">
-            Name:
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">
-            Email:
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">
-            Password:
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <div className="form-group">
-          <label htmlFor="confirmPassword">
-            Confirm Password:
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        {error && <div className="error-message">{error}</div>}
-        <button type="submit">Register</button>
+      <form className="registration-form--form" onSubmit={handleSubmit}>
+        <label htmlFor="name">
+          Name:
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+        </label>
+        <label htmlFor="email">
+          Email:
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </label>
+        <label htmlFor="password">
+          Password:
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </label>
+        <label htmlFor="confirmPassword">
+          Confirm Password:
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+          />
+        </label>
+        {userStatus.signedin ? (
+          <button type="button" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        ) : (
+          <button type="submit">Register</button>
+        )}
+        <p>{userStatus.message}</p>
       </form>
     </div>
   );

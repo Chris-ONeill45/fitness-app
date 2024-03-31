@@ -27,7 +27,15 @@ const App = () => {
               />
             }
           />
-          <Route path="/registration" element={<RegistrationForm />} />
+          <Route
+            path="/registration"
+            element={
+              <RegistrationForm
+                userStatus={userStatus}
+                setUserStatus={setUserStatus}
+              />
+            }
+          />
         </Routes>
         <Footer />
       </Router>
