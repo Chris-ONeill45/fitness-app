@@ -94,6 +94,8 @@ const InitSetForm = ({ name, email }) => {
       <Link to="/dashboard">Continue</Link>
     </div>
   );
+const InitSetForm = () => {
+  return <div className="init-set-form">initsetfrom</div>;
 };
 
 export default InitSetForm;

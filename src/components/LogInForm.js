@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import Footer from './Footer';
+import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import '../styles/log-in-form.css';
+import app from '../firebaseConfig';
 
-const LoginForm = () => {
+const LoginForm = ({ userStatus, setUserStatus }) => {
+  const auth = getAuth(app);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,48 +20,80 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      // Server logic??????
-      const response = await axios.post('/api/login', formData);
-      console.log('Login successful:', response.data);
-    } catch (err) {
-      console.error('Login failed:', error);
-      setError('Login failed. Please try again.');
-    }
+    signInWithEmailAndPassword(auth, formData.email, formData.password)
+      .then((response) => {
+        setUserStatus({
+          signedin: true,
+          signedinEmail: response.user.email,
+          message: `${response.user.email} logged in`,
+        });
+        setFormData({
+          email: '',
+          password: '',
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setUserStatus({
+          signedin: false,
+          signedinEmail: null,
+          message: err.message,
+        });
+      });
+  };
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUserStatus({
+          signedin: false,
+          signedinEmail: null,
+          message: 'Not signed in',
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setUserStatus({
+          signedin: false,
+          signedinEmail: null,
+          message: err.message,
+        });
+      });
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">
-            Email:
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <div>
-          <label htmlFor="password">
-            Password:
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-        <button type="submit">Login</button>
-        {error && <div className="error-message">{error}</div>}
+    <div className="log-in-form">
+      <form className="log-in-form--form" onSubmit={handleSubmit}>
+        <label htmlFor="email">
+          Email:
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </label>
+        <label htmlFor="password">
+          Password:
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </label>
+        {userStatus.signedin ? (
+          <button type="button" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        ) : (
+          <button type="submit">Login</button>
+        )}
+        <p>{userStatus.message}</p>
       </form>
       <Link to="/registration">Register Here</Link>
-      <Footer />
     </div>
   );
 };
