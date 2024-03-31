@@ -6,7 +6,7 @@ const InitSetForm = ({ userStatus }) => {
   const [formData, setFormData] = useState({
     dob: '',
     height: '',
-    dataset: [],
+    dataSet: [],
   });
 
   const handleChange = (e) => {
@@ -18,7 +18,13 @@ const InitSetForm = ({ userStatus }) => {
     const { value, name } = e.target;
     setFormData({
       ...formData,
-      dataset: [{ label: name, measurement: value }],
+      dataSet: [
+        {
+          label: name,
+          unit: 'Kg',
+          entries: { measurement: value, timeStamp: new Date() },
+        },
+      ],
     });
   };
 
@@ -26,7 +32,13 @@ const InitSetForm = ({ userStatus }) => {
     e.preventDefault();
 
     axios
-      .post('/users', { formData })
+      .post('/users', {
+        name: userStatus.name,
+        email: userStatus.signedinEmail,
+        dob: formData.dob,
+        height: formData.height,
+        dataSet: formData.dataSet,
+      })
       .then((response) => {
         console.log(response);
       })
