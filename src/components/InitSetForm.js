@@ -2,42 +2,47 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const InitSetForm = ({ name, email }) => {
+const InitSetForm = ({ userStatus }) => {
   const [formData, setFormData] = useState({
     dob: '',
     height: '',
-    weight: '',
-    dataset: '',
+    dataset: [],
   });
 
   const handleChange = (e) => {
-    const { value } = e.target;
+    const { value, name } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleWeightChange = (e) => {
+    const { value, name } = e.target;
+    setFormData({
+      ...formData,
+      dataset: [{ label: name, measurement: value }],
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      // Send the initialization data to the server
-      const response = await axios.post('/api/initialize', formData);
-      console.log('Initialization successful:', response.data);
-      // Optionally, redirect the user or perform other actions after successful initialization
-    } catch (error) {
-      console.error('Initialization failed:', error);
-      // Optionally, display an error message to the user
-    }
+    axios
+      .post('/users', { formData })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   return (
     <div>
-      <h2>Welcome, {name}!</h2>
-      <p>Email: {email}</p>
+      <h2>Welcome, {userStatus.name}!</h2>
 
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="dob">
-            Date of Birth:
+            Date of Birth
             <input
               type="date"
               id="dob"
@@ -49,9 +54,10 @@ const InitSetForm = ({ name, email }) => {
         </div>
         <div>
           <label htmlFor="height">
-            Height:
+            Height
             <input
-              type="text"
+              type="number"
+              placeholder="Cm"
               id="height"
               name="height"
               value={formData.height}
@@ -61,13 +67,14 @@ const InitSetForm = ({ name, email }) => {
         </div>
         <div>
           <label htmlFor="weight">
-            Weight:
+            Weight
             <input
-              type="text"
+              type="number"
+              placeholder="Kg"
               id="weight"
               name="weight"
               value={formData.weight}
-              onChange={handleChange}
+              onChange={handleWeightChange}
             />
           </label>
         </div>
@@ -94,6 +101,6 @@ const InitSetForm = ({ name, email }) => {
       <Link to="/dashboard">Continue</Link>
     </div>
   );
-      }
+};
 
-export default InitSetForm
+export default InitSetForm;

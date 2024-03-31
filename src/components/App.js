@@ -9,13 +9,12 @@ import InitSetForm from './InitSetForm';
 import Dashboard from './Dashboard';
 import SetForm from './SetForm';
 
-
-
 const App = () => {
   const [userStatus, setUserStatus] = useState({
     signedin: false,
     signedinEmail: null,
     message: 'Not signed in',
+    name: null,
   });
 
   return (
@@ -44,7 +43,12 @@ const App = () => {
 
           <Route
             path="/init-set"
-            element={<InitSetForm name="John" email="john@example.com" />}
+            element={
+              <InitSetForm
+                userStatus={userStatus}
+                setUserStatus={setUserStatus}
+              />
+            }
           />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<SetForm />} />

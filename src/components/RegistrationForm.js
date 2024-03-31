@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -9,6 +10,7 @@ import '../styles/registration-form.css';
 
 const RegistrationForm = ({ userStatus, setUserStatus }) => {
   const auth = getAuth(app);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -22,7 +24,7 @@ const RegistrationForm = ({ userStatus, setUserStatus }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const { name, email, password, confirmPassword } = formData;
 
@@ -41,7 +43,9 @@ const RegistrationForm = ({ userStatus, setUserStatus }) => {
           signedin: true,
           signedinEmail: response.user.email,
           message: `${response.user.email} registered`,
+          name: formData.name,
         });
+        navigate('/init-set');
       })
       .catch((err) => {
         setUserStatus({
