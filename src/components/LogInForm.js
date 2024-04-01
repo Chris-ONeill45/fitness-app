@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import '../styles/log-in-form.css';
-import app from '../firebaseConfig';
+import app from '../config/firebaseConfig';
 
 const LoginForm = ({ userStatus, setUserStatus }) => {
   const auth = getAuth(app);

@@ -5,7 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import app from '../firebaseConfig';
+import app from '../config/firebaseConfig';
 import '../styles/registration-form.css';
 
 const RegistrationForm = ({ userStatus, setUserStatus }) => {
