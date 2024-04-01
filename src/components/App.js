@@ -8,6 +8,7 @@ import Footer from './Footer';
 import InitSetForm from './InitSetForm';
 import Dashboard from './Dashboard';
 import SetForm from './SetForm';
+import AddData from './AddData';
 
 const App = () => {
   const [userStatus, setUserStatus] = useState({
@@ -52,6 +53,10 @@ const App = () => {
           />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<SetForm />} />
+          <Route
+            path="/add-data"
+            element={<AddData userStatus={userStatus} />}
+          />
         </Routes>
         <Footer />
       </Router>
